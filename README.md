@@ -294,10 +294,10 @@ VM-003,25.8,30.2,40.5,0.75
 
 ## 👨‍💻 Author
 
-**Bhumi**
+**Bhumika Kalamkar**
 - GitHub: [github.com/Bhumi1749](https://github.com/Bhumi1749)
-- LinkedIn: [Add your LinkedIn profile URL]
-- Email: [Your email address]
+- LinkedIn: [www.linkedin.com/in/bhumika-kalamkar]
+- Email: [bhumikakalamkar1749@gmail.com]
 
 ## 📄 License
 
