@@ -47,11 +47,17 @@ This system analyzes cloud Virtual Machine (VM) usage patterns using K-Means clu
 - **Format Validation**: Ensures only valid CSV files are processed
 - **Automatic Analysis**: Uploaded files are instantly analyzed
 
+### Phase 6: Security & Authentication
+- **User Authentication**: Spring Security with BCrypt encryption
+- **Session Management**: Secure login/logout functionality
+- **Protected Endpoints**: Role-based access control
+
 ## 🏗️ Architecture
 
 ### Technology Stack
 - **Backend**: Java 17, Spring Boot 3.1.5
-- **Database**: H2 (In-memory for development)
+- **Security**: Spring Security with BCrypt
+- **Database**: H2 (In-memory for development) / MySQL (for production)
 - **Machine Learning**: Weka 3.8.6 (K-Means clustering)
 - **CSV Processing**: OpenCSV 5.8
 - **Export**: Apache POI (Excel), iText (PDF)
@@ -63,18 +69,24 @@ This system analyzes cloud Virtual Machine (VM) usage patterns using K-Means clu
 src/main/java/com/cloudcost/optimizer/
 ├── controller/
 │   ├── VMController.java          # REST API endpoints
-│   └── DashboardController.java   # Web page controller
+│   ├── DashboardController.java   # Web page controller
+│   └── AuthController.java        # Authentication controller
 ├── service/
 │   ├── VMAnalysisService.java     # Core analysis logic
 │   ├── MLService.java             # Machine Learning operations
 │   ├── DecisionImpactService.java # Decision simulation engine
-│   └── ExportService.java         # Excel/PDF generation
+│   ├── ExportService.java         # Excel/PDF generation
+│   └── UserService.java           # User management
 ├── model/
 │   ├── VirtualMachine.java        # VM entity
-│   └── DecisionScenario.java      # Simulation result entity
+│   ├── DecisionScenario.java      # Simulation result entity
+│   └── User.java                  # User entity
 ├── repository/
 │   ├── VirtualMachineRepository.java
-│   └── DecisionScenarioRepository.java
+│   ├── DecisionScenarioRepository.java
+│   └── UserRepository.java
+├── config/
+│   └── SecurityConfig.java        # Spring Security configuration
 └── util/
     └── CSVReaderUtil.java         # CSV parsing utility
 
@@ -83,7 +95,9 @@ src/main/resources/
 │   ├── css/style.css              # Professional UI styling
 │   └── js/app.js                  # Frontend logic + Chart.js
 ├── templates/
-│   └── dashboard.html             # Main dashboard
+│   ├── dashboard.html             # Main dashboard
+│   ├── login.html                 # Login page
+│   └── register.html              # Registration page
 └── application.properties         # Configuration
 ```
 
@@ -151,7 +165,7 @@ Confidence = 100 - Risk Score
 ### Steps
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/cloud-cost-optimizer.git
+git clone https://github.com/Bhumi1749/cloud-cost-optimizer.git
 cd cloud-cost-optimizer
 ```
 
@@ -165,16 +179,40 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-4. Access the dashboard
+4. Access the application
 ```
 http://localhost:8080
 ```
 
+## 🔐 Authentication
+
+The system includes secure user authentication:
+
+### First Time Setup
+1. Navigate to `http://localhost:8080`
+2. Click **"Register here"**
+3. Create an account with:
+   - Username
+   - Email
+   - Password (minimum 6 characters)
+4. Login with your credentials
+
+### Features
+- **Spring Security** with BCrypt password encryption
+- **Session management** with automatic logout
+- **Role-based access control** (ROLE_USER)
+- **Protected endpoints** - authentication required for dashboard access
+
+### Default Access
+- Login page: `http://localhost:8080/login`
+- Register page: `http://localhost:8080/register`
+- Dashboard (after login): `http://localhost:8080/dashboard`
+
 ## 📖 Usage Guide
 
 ### 1. Analyze VMs
-- Click "🔍 Analyze VMs" to process the default CSV
-- Or click "📤 Upload CSV" to analyze custom data
+- Click "📤 Upload & Analyze CSV" to upload your VM data file
+- Or use the sample CSV provided in `data/vm_usage_data.csv`
 
 ### 2. View Results
 - Dashboard shows summary statistics
@@ -205,6 +243,7 @@ VM-003,25.8,30.2,40.5,0.75
 - RESTful API design
 - Machine Learning integration
 - Database modeling (JPA/Hibernate)
+- Spring Security implementation
 - File processing and validation
 - Report generation
 - Frontend-backend integration
@@ -222,11 +261,13 @@ VM-003,25.8,30.2,40.5,0.75
 - SOLID principles
 - Exception handling
 - Input validation
+- Password encryption
+- Session management
 
 ## 🚀 Future Enhancements
 
+- [x] User authentication and authorization ✅
 - [ ] MySQL/PostgreSQL support for production
-- [ ] User authentication and authorization
 - [ ] Multi-tenancy support
 - [ ] Email notifications for high-risk VMs
 - [ ] Historical trend analysis
@@ -247,13 +288,16 @@ VM-003,25.8,30.2,40.5,0.75
 | POST | `/api/vms/simulate` | Simulate decision impact |
 | GET | `/api/vms/export/excel` | Download Excel report |
 | GET | `/api/vms/export/pdf` | Download PDF report |
+| GET | `/login` | Login page |
+| POST | `/register` | User registration |
+| GET | `/dashboard` | Main dashboard (protected) |
 
 ## 👨‍💻 Author
 
-**Your Name**
-- Email: your.email@example.com
-- LinkedIn: linkedin.com/in/yourprofile
-- GitHub: github.com/yourusername
+**Bhumi**
+- GitHub: [github.com/Bhumi1749](https://github.com/Bhumi1749)
+- LinkedIn: [Add your LinkedIn profile URL]
+- Email: [Your email address]
 
 ## 📄 License
 
@@ -263,5 +307,6 @@ This project is licensed under the MIT License.
 
 - Weka Machine Learning Library
 - Spring Boot Framework
+- Spring Security
 - Chart.js Visualization Library
 - Apache POI & iText for report generation
