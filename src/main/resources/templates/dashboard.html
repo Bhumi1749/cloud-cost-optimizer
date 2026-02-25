@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Cost Optimizer - AI Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- User Header -->
+        <div class="user-header">
+            <div>
+                <span class="welcome-text">Welcome, <strong th:text="${username}">User</strong>!</span>
+            </div>
+            <form th:action="@{/logout}" method="post" style="margin: 0;">
+                <button type="submit" class="btn-logout">🚪 Logout</button>
+            </form>
+        </div>
+        
+        <h1>☁️ AI-Based Cloud Cost Optimization Dashboard</h1>
+        
+        <div class="controls">
+            <button class="btn-upload" onclick="document.getElementById('fileInput').click()">📤 Upload & Analyze CSV</button>
+            <input type="file" id="fileInput" accept=".csv" style="display: none;" onchange="uploadFile()">
+            <button class="btn-clear" onclick="clearVMs()">🗑️ Clear Data</button>
+            <button class="btn-export" onclick="exportToExcel()">📊 Export Excel</button>
+            <button class="btn-export" onclick="exportToPDF()">📄 Export PDF</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total VMs</h3>
+                <p id="totalVMs">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Potential Monthly Savings</h3>
+                <p id="totalSavings">$0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Under-Utilized</h3>
+                <p id="underUtilized">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Over-Utilized</h3>
+                <p id="overUtilized">0</p>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3>VM Distribution by Cluster</h3>
+                <canvas id="clusterChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Cost Analysis</h3>
+                <canvas id="costChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Resource Utilization</h3>
+                <canvas id="utilizationChart"></canvas>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>VM ID</th>
+                    <th>CPU Usage</th>
+                    <th>RAM Usage</th>
+                    <th>Disk Usage</th>
+                    <th>Cost/Hour</th>
+                    <th>Cluster</th>
+                    <th>Recommendation</th>
+                    <th>Monthly Savings</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="vmTableBody">
+                <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Simulation Modal -->
+    <div id="simulationModal" class="modal">
+        <div class="modal-content">
+            <h2>🎯 Decision Impact Simulator<span class="close" onclick="closeSimulationModal()">&times;</span></h2>
+            
+            <div class="simulation-section">
+                <h3>Current State</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">VM ID:</span>
+                        <span id="sim-vmid" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Current Cost/Hour:</span>
+                        <span id="sim-current-cost" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">CPU Usage:</span>
+                        <span id="sim-current-cpu" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">RAM Usage:</span>
+                        <span id="sim-current-ram" class="value"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="simulation-section">
+                <h3>Select Action</h3>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="simulateAction('DOWNSCALE')">⬇️ Downscale</button>
+                    <button class="action-btn" onclick="simulateAction('UPSCALE')">⬆️ Upscale</button>
+                    <button class="action-btn" onclick="simulateAction('SCHEDULE')">⏰ Schedule</button>
+                    <button class="action-btn" onclick="simulateAction('TERMINATE')">🛑 Terminate</button>
+                </div>
+            </div>
+            
+            <div id="simulationResults" class="simulation-section" style="display: none;">
+                <h3>📊 Simulation Results</h3>
+                
+                <div class="result-card">
+                    <div class="result-header">
+                        <h4>Predicted Impact</h4>
+                        <span id="sim-recommendation" class="badge"></span>
+                    </div>
+                    
+                    <div class="impact-grid">
+                        <div class="impact-item">
+                            <span class="impact-label">💰 Cost Impact (Monthly)</span>
+                            <span id="sim-cost-impact" class="impact-value"></span>
+                        </div>
+                        <div class="impact-item">
+                            <span class="impact-label">⚡ Performance Impact</span>
+                            <span id="sim-perf-impact" class="impact-value"></span>
+                        </div>
+                        <div class="impact-item">
+                            <span class="impact-label">⚠️ Risk Level</span>
+                            <span id="sim-risk-level" class="impact-value"></span>
+                        </div>
+                        <div class="impact-item">
+                            <span class="impact-label">📈 Confidence Score</span>
+                            <span id="sim-confidence" class="impact-value"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="reasoning-box">
+                        <h4>🧠 AI Reasoning</h4>
+                        <p id="sim-reasoning"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/app.js"></script>
+</body>
+</html>
